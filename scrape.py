@@ -3,6 +3,7 @@ import cssbeautifier
 import requests
 import hashlib
 import json
+import git
 
 
 FILE_LIST = [
