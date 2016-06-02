@@ -1,3 +1,4 @@
+from datetime import date
 import jsbeautifier
 import cssbeautifier
 import requests
@@ -51,3 +52,11 @@ for link in FILE_LIST:
 
 with open('checksums.json', 'w') as fp:
     json.dump(checksums, fp)
+
+repo = git.Repo('.')
+try:
+    repo.git.add('.')
+    repo.git.commit(m='Daily update {}'.format(date.today()))
+    repo.git.push()
+except Exception as e:
+    print e
