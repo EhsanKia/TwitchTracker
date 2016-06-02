@@ -18179,6 +18179,9 @@ googletag.cmd = googletag.cmd || [],
                                 var t = e.val() || {};
                                 f(t.lastUnreadMessageSHA)
                             })
+                        }, function(e) {
+                            if (e && e.status === 401) return;
+                            throw e
                         })
                     },
                     c = function(e) {
@@ -19504,7 +19507,8 @@ function(e, t) {
             CDN_EXPERIMENT: "b29d055f-74f2-40b9-9383-9c4b79b30360",
             CREATIVE_UNLIKELY_HERO: "dd2d60cd-b76b-4beb-a38c-ea60df88b3cc",
             CSGO_LANGUAGE_SAMPLE: "b86f6c73-d333-4d80-ab45-07cfff39aede",
-            LANGUAGE_DIRECTORY_FILTER: "653cc0db-d332-4df6-b224-15c5c481f7e7"
+            LANGUAGE_DIRECTORY_FILTER: "653cc0db-d332-4df6-b224-15c5c481f7e7",
+            CHANNEL_VIDEOS_TAB: "852b3485-a831-4580-b7bf-acf819977704"
         },
         i = {
             "1e2898d3-0123-4813-bb28-3d83618fd9f4": "no",
@@ -19516,7 +19520,8 @@ function(e, t) {
             "b29d055f-74f2-40b9-9383-9c4b79b30360": "control",
             "dd2d60cd-b76b-4beb-a38c-ea60df88b3cc": "no",
             "b86f6c73-d333-4d80-ab45-07cfff39aede": "control",
-            "653cc0db-d332-4df6-b224-15c5c481f7e7": "control"
+            "653cc0db-d332-4df6-b224-15c5c481f7e7": "control",
+            "852b3485-a831-4580-b7bf-acf819977704": "control"
         },
         s = "experiment_overrides",
         o = {},
@@ -19527,6 +19532,9 @@ function(e, t) {
     _.each(Object.keys(u), function(t) {
         o[r[t]] = e.user().then(function(e) {
             return e && e.is_staff ? u[t] : RSVP.Promise.reject()
+        }, function(e) {
+            if (e && e.status === 401) return;
+            throw e
         })
     });
     var a = e.url_params().experiments,
@@ -19836,11 +19844,11 @@ function(e, t) {
         }(), e.player.FlashPlayer2 = o;
     var u = {
         callbackId: 0,
-        register: function(t) {
+        register: function(
+            t) {
             e.player.FlashPlayer2.callbacks = e.player.FlashPlayer2.callbacks || {};
             var n = "callback" + this.callbackId++;
-            return e.player.FlashPlayer2.callbacks[n] = t, "Twitch.player.FlashPlayer2.callbacks." +
-                n
+            return e.player.FlashPlayer2.callbacks[n] = t, "Twitch.player.FlashPlayer2.callbacks." + n
         }
     }
 }(Twitch, jQuery),
@@ -20610,6 +20618,9 @@ function(e, t) {
                 if (!t.partner_state || t.caller_id !== t.owner_id) return;
                 if (n.activeProductOnly && !e.product) return;
                 s(e.login, t, n.attribute, n.bannerName, n.states, n.requiredStates, n.dismissKeys, r)
+            }, function(e) {
+                if (e && e.status === 401) return;
+                throw e
             })
         },
         r = ["start", "failed", "missing", "no_form", "requires_substantiation"],
@@ -20996,8 +21007,7 @@ function(e, t) {
                             label: i18n("Daily Resolution")
                         }],
                         n = {};
-                    e.forEach(function(
-                        e) {
+                    e.forEach(function(e) {
                         n[e.label] = e.identifier
                     });
                     var r = t.makeArray(t(e).map(function(e, t) {
@@ -21519,18 +21529,15 @@ var Base64 = {
             i = "https://api2.twitch.tv",
             s = window.location.protocol + "//" + SiteOptions.streams_api_hostport,
             o = "https://" + SiteOptions.streams_api_hostport,
-            u = function() {
-                if (window.cookie.get("force_api_stack")) return !0;
-                var e = SiteOptions.deploy_flavor === "production",
-                    t = Math.random() * 100 < SiteOptions.api_stack_rollout_percentage;
-                return e && t
-            };
+            u = SiteOptions.deploy_flavor === "production",
+            a = Math.random() * 100 < SiteOptions.api_stack_rollout_percentage,
+            f = window.cookie.get("force_api_stack") || u && a;
         Twitch.api.init({
-            baseUrl: u() ? r : t,
-            baseUrlSecure: u() ? i : n,
+            baseUrl: f ? r : t,
+            baseUrlSecure: f ? i : n,
             streamsBaseUrl: s,
             streamsBaseUrlSecure: o,
-            receiverUrl: (u() ? r : t) + "/crossdomain/receiver.html?v=2",
+            receiverUrl: (f ? r : t) + "/crossdomain/receiver.html?v=2",
             login: Twitch.user.login()
         })
     }(jQuery),
@@ -21600,6 +21607,9 @@ var Base64 = {
                     forgetDuration: 3600,
                     delay: 5
                 })
+            }, function(e) {
+                if (e && e.status === 401) return;
+                throw e
             }), t.user.isLoggedIn() || (e("#user_display_name").hide(), e("#user_login").show()), typeof PP != "undefined" && window.SitePageType !== "directory" && (["channel", "video"].indexOf(window.SitePageType) === -1 && t.tracking.gaq.trackPageView(), t.tracking.mixpanel.trackDiscovery())
         })
     }(jQuery, Twitch);

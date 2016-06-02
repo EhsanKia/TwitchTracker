@@ -1582,6 +1582,39 @@
             Object.defineProperty(exports, "__esModule", {
                 value: true
             });
+            var _slicedToArray = function() {
+                function sliceIterator(arr, i) {
+                    var _arr = [];
+                    var _n = true;
+                    var _d = false;
+                    var _e = undefined;
+                    try {
+                        for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+                            _arr.push(_s.value);
+                            if (i && _arr.length === i) break
+                        }
+                    } catch (err) {
+                        _d = true;
+                        _e = err
+                    } finally {
+                        try {
+                            if (!_n && _i["return"]) _i["return"]()
+                        } finally {
+                            if (_d) throw _e
+                        }
+                    }
+                    return _arr
+                }
+                return function(arr, i) {
+                    if (Array.isArray(arr)) {
+                        return arr
+                    } else if (Symbol.iterator in Object(arr)) {
+                        return sliceIterator(arr, i)
+                    } else {
+                        throw new TypeError("Invalid attempt to destructure non-iterable instance")
+                    }
+                }
+            }();
 
             function _interopRequireDefault(obj) {
                 return obj && obj.__esModule ? obj : {
@@ -1600,6 +1633,41 @@
                 ROOMCHANGED: true,
                 ROOMDELETED: true,
                 ROOMINVITE: true
+            };
+            var parseBadgesTag = function parseBadgesTag() {
+                var value = arguments.length <= 0 || arguments[0] === undefined ? "" : arguments[0];
+                var parsedBadges = {};
+                if (value === "") {
+                    return parsedBadges
+                }
+                var badgeTags = value.split(",");
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+                try {
+                    for (var _iterator = badgeTags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var badgeTag = _step.value;
+                        var _badgeTag$split = badgeTag.split("/");
+                        var _badgeTag$split2 = _slicedToArray(_badgeTag$split, 2);
+                        var badgeName = _badgeTag$split2[0];
+                        var badgeVersion = _badgeTag$split2[1];
+                        parsedBadges[badgeName] = badgeVersion
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator["return"]) {
+                            _iterator["return"]()
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError
+                        }
+                    }
+                }
+                return parsedBadges
             };
             var parseEmotesTag = function parseEmotesTag(value) {
                 var parsedEmotes = {};
@@ -1665,6 +1733,8 @@
             };
             var parseTwitchTag = function parseTwitchTag(tag, value) {
                 switch (tag) {
+                    case "badges":
+                        return parseBadgesTag(value);
                     case "emotes":
                         return parseEmotesTag(value);
                     case "sent-ts":
@@ -1820,7 +1890,7 @@
                             case "PRIVMSG":
                                 parsedMsg = merge({
                                     target: msgParts.params[0],
-                                    message: msgParts.action || msgParts.trailing
+                                    message: msgParts.action || msgParts.trailing || ""
                                 });
                                 if (parsedMsg.tags.emotes) {
                                     parsedMsg.tags.emotes = convertEmoteIndicesToUCS2(parsedMsg.message, parsedMsg.tags.emotes)
@@ -2342,6 +2412,7 @@
                 this.publicInvitesEnabled = opts.publicInvitesEnabled;
                 this._chattersListUrl = opts.chattersListUrl;
                 this._roomUserLabels = new _utilJs2["default"].types.SetStore;
+                this._roomUserBadges = {};
                 this.on("connection:retry", this._onConnRetry, this);
                 this.on("entered", this._onEntered, this);
                 this._setRoomConn(new RoomConnection({
@@ -2510,6 +2581,9 @@
                 var specials = this.session._users.getSpecials(username);
                 return _utilJs2["default"].array.join(this.name === username ? ["owner"] : [], this._roomUserLabels.get(username), specials)
             };
+            Room.prototype.getBadges = function(username) {
+                return this._roomUserBadges[username]
+            };
             Room.prototype.sendMessage = function(msg) {
                 if (!this._roomConn) {
                     logger.warning('Attempted to send "' + msg + '" prior to configuring room connection. Ignoring.');
@@ -2529,7 +2603,8 @@
                     date: new Date,
                     tags: {
                         emotes: self.session._emotesParser.parseEmotesTag(message),
-                        "display-name": self.session.getDisplayName(self.session.nickname)
+                        "display-name": self.session.getDisplayName(self.session.nickname),
+                        badges: self.getBadges(self.session.nickname)
                     },
                     labels: self.getLabels(self.session.nickname)
                 };
@@ -2631,7 +2706,7 @@
             };
             Room.prototype.startSlowMode = function(seconds) {
                 seconds = seconds || "";
-                this.sendMessage("/slow " + seconds);
+                this.sendMessage("/slow " + seconds)
             };
             Room.prototype.stopSlowMode = function() {
                 this.sendMessage("/slowoff")
@@ -2898,6 +2973,7 @@
                 this._updateUserState(this.session.nickname, msg.tags)
             };
             Room.prototype._updateUserState = function(user, tags) {
+                this._updateUserStateBadges(user, tags.badges);
                 this._updateUserStateLabel(user, tags, "subscriber");
                 this._updateUserStateLabel(user, tags, "mod")
             };
@@ -2913,8 +2989,30 @@
                     this._onLabelsChanged(user)
                 }
             };
+            Room.prototype._updateUserStateBadges = function(user) {
+                var currentBadges = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+                var existingBadges = this._roomUserBadges[user] || {};
+                var stateHasChanged = Object.keys(currentBadges).length !== Object.keys(existingBadges).length;
+                if (!stateHasChanged) {
+                    for (var badge in existingBadges) {
+                        var existingBadgeVersion = existingBadges[badge];
+                        var currentBadgeVersion = currentBadges[badge];
+                        if (existingBadgeVersion !== currentBadgeVersion) {
+                            stateHasChanged = true;
+                            break
+                        }
+                    }
+                }
+                if (stateHasChanged) {
+                    this._roomUserBadges[user] = currentBadges;
+                    this._onBadgesChanged(user)
+                }
+            };
             Room.prototype._onLabelsChanged = function(username) {
                 this._trigger("labelschanged", username)
+            };
+            Room.prototype._onBadgesChanged = function(username) {
+                this._trigger("badgeschanged", username)
             };
             Room.prototype._onClearChat = function(ircChannel, username, tags) {
                 if (ircChannel != this.ircChannel) return;

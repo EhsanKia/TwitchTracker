@@ -1,30 +1,4 @@
 @import url('application-blessed1.css');
-#highlighter .highlight-content .player-container #player .highlight-marker .left-marker,
-#highlighter .highlight-content .player-container #player .highlight-marker .right-marker,
-#highlighter .highlight-content .player-container #player .highlight-marker .left-marker-bottom,
-#highlighter .highlight-content .player-container #player .highlight-marker .right-marker-bottom {
-    height: 14px;
-    width: 10px;
-    z-index: 10;
-    cursor: ew-resize;
-    position: relative
-}
-
-#highlighter .highlight-content .player-container #player .highlight-marker .left-marker .grooves,
-#highlighter .highlight-content .player-container #player .highlight-marker .right-marker .grooves,
-#highlighter .highlight-content .player-container #player .highlight-marker .left-marker-bottom .grooves,
-#highlighter .highlight-content .player-container #player .highlight-marker .right-marker-bottom .grooves {
-    border-width: 0 1px;
-    border-style: solid;
-    border-color: #ffb300;
-    height: 8px;
-    margin: 0 3px;
-    position: absolute;
-    top: -4px;
-    width: 2px;
-    z-index: 11
-}
-
 #highlighter .highlight-content .player-container #player .highlight-marker .left-marker:before,
 #highlighter .highlight-content .player-container #player .highlight-marker .left-marker:after,
 #highlighter .highlight-content .player-container #player .highlight-marker .right-marker:before,
@@ -2168,6 +2142,10 @@ body#kraken_auth .legal_page article>section nav {
     background: #efeef1;
     margin-top: 20px;
     padding: 10px 20px
+}
+
+.two-factor-auth .sub-text p {
+    margin-bottom: 0
 }
 
 .edit .wrapper {
@@ -5958,6 +5936,11 @@ h3.section_header {
 
 .tabbed-split__panel:last-child {
     margin-right: 0
+}
+
+.split-pane {
+    display: inline-block;
+    vertical-align: top
 }
 
 .manager {
@@ -10142,8 +10125,7 @@ input.text--rev {
     width: 0;
     height: 0;
     border-style: solid;
-    position: absolute;
-    top: 4.3rem
+    position: absolute
 }
 
 .revArrow--up {
@@ -13070,6 +13052,12 @@ ul.tabs_fake:after,
     line-height: 3rem
 }
 
+.type-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
 .markdown h1 {
     line-height: 4rem;
     font-size: 4rem;
@@ -13349,9 +13337,6 @@ ul.tabs_fake:after,
         -ms-transform-origin: center right;
         transform-origin: center right
     }
-    .ct-card__info {
-        width: 50%
-    }
     .xs-mg-t-1 {
         margin-top: 0
     }
@@ -13467,9 +13452,6 @@ ul.tabs_fake:after,
     .ct-banner__feature--focus {
         max-width: 768px
     }
-    .ct-card__info {
-        width: 65%
-    }
 }
 
 @media(min-width:1440px) {
@@ -13583,9 +13565,6 @@ ul.tabs_fake:after,
     }
     .ct-banner__shadow {
         box-shadow: 0 10px 12px -8px rgba(125, 91, 190, .8)
-    }
-    .ct-card__info {
-        width: 80%
     }
 }
 
