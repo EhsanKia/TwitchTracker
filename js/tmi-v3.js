@@ -3698,6 +3698,7 @@
                     to: msg.to,
                     message: msg.message,
                     tags: msg.tags || {
+                        badges: msg.tags.badges,
                         emotes: this._emotesParser.parseEmotesTag(msg.message),
                         "display-name": this.getDisplayName(msg.sender)
                     },
@@ -3794,7 +3795,7 @@
                 this._reset();
                 if (shouldCloseSocketSwf) {
                     this._logger.debug("Calling close on SWF.");
-                    this._socketSwf.close();
+                    this._socketSwf.close()
                 }
             };
             FlashSocket.prototype.send = function(data, appendNullByte) {
