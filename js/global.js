@@ -19502,26 +19502,30 @@ function(e, t) {
             RECOMMENDED_CHANNELS: "aaac75ea-c969-4826-b32d-ceefac620a79",
             RECOMMENDED_GAMES: "61b169ff-bc62-4725-a40e-1be627197c6f",
             VOD_COVIEWS: "c48ae3e6-1356-4ccc-8fbe-12c6909f9e98",
+            VOD_COVIEWS_AB: "e7516730-b94f-4d46-894e-c18612aab270",
             NEW_SEARCH: "3eeffd8a-5a75-4382-a167-8406b1b273b7",
             NUM_TOP_REACTIONS: "b9063610-cdfd-43c3-8479-59a6ab82d831",
             CDN_EXPERIMENT: "b29d055f-74f2-40b9-9383-9c4b79b30360",
             CREATIVE_UNLIKELY_HERO: "dd2d60cd-b76b-4beb-a38c-ea60df88b3cc",
             CSGO_LANGUAGE_SAMPLE: "b86f6c73-d333-4d80-ab45-07cfff39aede",
             LANGUAGE_DIRECTORY_FILTER: "653cc0db-d332-4df6-b224-15c5c481f7e7",
-            CHANNEL_VIDEOS_TAB: "852b3485-a831-4580-b7bf-acf819977704"
+            CHANNEL_VIDEOS_TAB: "852b3485-a831-4580-b7bf-acf819977704",
+            COMMENTS_REACTION_EXPERIMENT: "66235fc6-1972-421c-ab6b-9137ddaacdaf"
         },
         i = {
             "1e2898d3-0123-4813-bb28-3d83618fd9f4": "no",
             "aaac75ea-c969-4826-b32d-ceefac620a79": "no",
             "61b169ff-bc62-4725-a40e-1be627197c6f": "no",
             "c48ae3e6-1356-4ccc-8fbe-12c6909f9e98": "control",
+            "e7516730-b94f-4d46-894e-c18612aab270": "control",
             "3eeffd8a-5a75-4382-a167-8406b1b273b7": "no",
             "b9063610-cdfd-43c3-8479-59a6ab82d831": "0",
             "b29d055f-74f2-40b9-9383-9c4b79b30360": "control",
             "dd2d60cd-b76b-4beb-a38c-ea60df88b3cc": "no",
             "b86f6c73-d333-4d80-ab45-07cfff39aede": "control",
             "653cc0db-d332-4df6-b224-15c5c481f7e7": "control",
-            "852b3485-a831-4580-b7bf-acf819977704": "control"
+            "852b3485-a831-4580-b7bf-acf819977704": "control",
+            "66235fc6-1972-421c-ab6b-9137ddaacdaf": "1"
         },
         s = "experiment_overrides",
         o = {},
@@ -19844,8 +19848,7 @@ function(e, t) {
         }(), e.player.FlashPlayer2 = o;
     var u = {
         callbackId: 0,
-        register: function(
-            t) {
+        register: function(t) {
             e.player.FlashPlayer2.callbacks = e.player.FlashPlayer2.callbacks || {};
             var n = "callback" + this.callbackId++;
             return e.player.FlashPlayer2.callbacks[n] = t, "Twitch.player.FlashPlayer2.callbacks." + n

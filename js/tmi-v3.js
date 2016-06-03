@@ -1641,31 +1641,13 @@
                     return parsedBadges
                 }
                 var badgeTags = value.split(",");
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-                try {
-                    for (var _iterator = badgeTags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var badgeTag = _step.value;
-                        var _badgeTag$split = badgeTag.split("/");
-                        var _badgeTag$split2 = _slicedToArray(_badgeTag$split, 2);
-                        var badgeName = _badgeTag$split2[0];
-                        var badgeVersion = _badgeTag$split2[1];
-                        parsedBadges[badgeName] = badgeVersion
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator["return"]) {
-                            _iterator["return"]()
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError
-                        }
-                    }
+                for (var i = 0; i < badgeTags.length; i++) {
+                    var badgeTag = badgeTags[i];
+                    var _badgeTag$split = badgeTag.split("/");
+                    var _badgeTag$split2 = _slicedToArray(_badgeTag$split, 2);
+                    var badgeName = _badgeTag$split2[0];
+                    var badgeVersion = _badgeTag$split2[1];
+                    parsedBadges[badgeName] = badgeVersion
                 }
                 return parsedBadges
             };
@@ -2660,7 +2642,7 @@
                         self._showAdminMessage("Failed to start commercial.")
                     })
                 } else {
-                    self._showAdminMessage("That's an invalid commercial length!")
+                    self._showAdminMessage("That's an invalid commercial length!");
                 }
             };
             Room.prototype.ignoreUser = function(username, reason) {
@@ -3812,7 +3794,7 @@
                 this._reset();
                 if (shouldCloseSocketSwf) {
                     this._logger.debug("Calling close on SWF.");
-                    this._socketSwf.close()
+                    this._socketSwf.close();
                 }
             };
             FlashSocket.prototype.send = function(data, appendNullByte) {
