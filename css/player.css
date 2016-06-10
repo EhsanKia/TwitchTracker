@@ -1203,9 +1203,9 @@ input[value=underline]~.cc-style-palette__square {
     font-size: 1.5em
 }
 
-.player[data-playlist=false][data-ended=false] .player-livestatus__online,
-.player[data-playlist=false][data-ended=true] .player-livestatus__offline,
-.player[data-playlist=true] .player-livestatus__playlist {
+.player[data-online=false][data-playlist=false] .player-livestatus__offline,
+.player[data-online=false][data-playlist=true] .player-livestatus__playlist,
+.player[data-online=true] .player-livestatus__online {
     display: block
 }
 

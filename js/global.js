@@ -19498,40 +19498,45 @@ function(e, t) {
 function(e, t) {
     var n = SiteOptions.experiments || {},
         r = {
-            RESUME_WATCHING: "1e2898d3-0123-4813-bb28-3d83618fd9f4",
             RECOMMENDED_CHANNELS: "aaac75ea-c969-4826-b32d-ceefac620a79",
             RECOMMENDED_GAMES: "61b169ff-bc62-4725-a40e-1be627197c6f",
+            VODS_GAME_INFO: "ac39b897-d41d-4255-90b6-3a59027e12e0",
             VOD_COVIEWS: "c48ae3e6-1356-4ccc-8fbe-12c6909f9e98",
             VOD_COVIEWS_AB: "e7516730-b94f-4d46-894e-c18612aab270",
+            VOD_COVIEWS_REMOVE_RECS: "2b4d2ad3-f7e5-422b-be2b-9bd99975b57c",
             NEW_SEARCH: "3eeffd8a-5a75-4382-a167-8406b1b273b7",
-            NUM_TOP_REACTIONS: "b9063610-cdfd-43c3-8479-59a6ab82d831",
             CDN_EXPERIMENT: "b29d055f-74f2-40b9-9383-9c4b79b30360",
             CREATIVE_UNLIKELY_HERO: "dd2d60cd-b76b-4beb-a38c-ea60df88b3cc",
             CSGO_LANGUAGE_SAMPLE: "b86f6c73-d333-4d80-ab45-07cfff39aede",
             LANGUAGE_DIRECTORY_FILTER: "653cc0db-d332-4df6-b224-15c5c481f7e7",
             CHANNEL_VIDEOS_TAB: "852b3485-a831-4580-b7bf-acf819977704",
-            COMMENTS_REACTION_EXPERIMENT: "66235fc6-1972-421c-ab6b-9137ddaacdaf"
+            COMMENTS_REACTION_EXPERIMENT: "66235fc6-1972-421c-ab6b-9137ddaacdaf",
+            CLIPS_ENABLED: "b4d61bdb-c174-47e6-a2f9-a46a4088ac26",
+            MESSAGE_DELETED_EXPERIMENT: "04165981-17be-4593-afbd-762a380f6838"
         },
         i = {
-            "1e2898d3-0123-4813-bb28-3d83618fd9f4": "no",
             "aaac75ea-c969-4826-b32d-ceefac620a79": "no",
             "61b169ff-bc62-4725-a40e-1be627197c6f": "no",
+            "ac39b897-d41d-4255-90b6-3a59027e12e0": "control",
             "c48ae3e6-1356-4ccc-8fbe-12c6909f9e98": "control",
             "e7516730-b94f-4d46-894e-c18612aab270": "control",
+            "2b4d2ad3-f7e5-422b-be2b-9bd99975b57c": "control",
             "3eeffd8a-5a75-4382-a167-8406b1b273b7": "no",
-            "b9063610-cdfd-43c3-8479-59a6ab82d831": "0",
             "b29d055f-74f2-40b9-9383-9c4b79b30360": "control",
             "dd2d60cd-b76b-4beb-a38c-ea60df88b3cc": "no",
             "b86f6c73-d333-4d80-ab45-07cfff39aede": "control",
             "653cc0db-d332-4df6-b224-15c5c481f7e7": "control",
             "852b3485-a831-4580-b7bf-acf819977704": "control",
-            "66235fc6-1972-421c-ab6b-9137ddaacdaf": "1"
+            "66235fc6-1972-421c-ab6b-9137ddaacdaf": "1",
+            "b4d61bdb-c174-47e6-a2f9-a46a4088ac26": "no",
+            "04165981-17be-4593-afbd-762a380f6838": "false"
         },
         s = "experiment_overrides",
         o = {},
         u = {
             CSGO_LANGUAGE_SAMPLE: "localized",
-            LANGUAGE_DIRECTORY_FILTER: "full"
+            LANGUAGE_DIRECTORY_FILTER: "full",
+            CLIPS_ENABLED: "yes"
         };
     _.each(Object.keys(u), function(t) {
         o[r[t]] = e.user().then(function(e) {
@@ -20188,7 +20193,8 @@ function(e, t) {
         var o = this;
         e.hls.getPlaylist(this.options.channel).then(function(n) {
             o._onlineStatus = "online", t(o).triggerHandler("online");
-            var i = o.eventController = new e.player.EventController(o.options.channel, n, {
+            var i = URI.parseQuery(window.location.search).mwcc,
+                s = {
                     vid_width: o.$contentPlayer.width(),
                     vid_height: o.$contentPlayer.height(),
                     player: o.options.player,
@@ -20204,8 +20210,10 @@ function(e, t) {
                     buffer_empty_count: undefined,
                     quality: undefined,
                     fullscreen: undefined
-                }),
-                s = function(e) {
+                };
+            i && (s.exp_name = "mwcc", s.exp_grp = i);
+            var u = o.eventController = new e.player.EventController(o.options.channel, n, s),
+                a = function(e) {
                     t.ajax({
                         type: "GET",
                         url: "http://fan.twitch.tv/" + e,
@@ -20219,31 +20227,31 @@ function(e, t) {
                     })
                 };
             if (o.options.ads === !1) {
-                s("ad"), setTimeout(s, 3e4, "adcompleted"), o.setSrc(n), console.info("HTML5Player.init success (no ads)"), r();
+                a("ad"), setTimeout(a, 3e4, "adcompleted"), o.setSrc(n), console.info("HTML5Player.init success (no ads)"), r();
                 return
             }
-            var u = new e.player.AdsController({
+            var f = new e.player.AdsController({
                 container: o.adContainer,
                 player: o.contentPlayer
             });
-            t(u).on("start", function(e) {
-                s("ad"), i.sendVideoAdImpression("preroll", e.currentTarget.adsLoader.provider)
-            }), t(u).on("contentResumeRequested adError", function() {
-                s("adcompleted"), o.setSrc(n), o.preloadContent(function() {
+            t(f).on("start", function(e) {
+                a("ad"), u.sendVideoAdImpression("preroll", e.currentTarget.adsLoader.provider)
+            }), t(f).on("contentResumeRequested adError", function() {
+                a("adcompleted"), o.setSrc(n), o.preloadContent(function() {
                     try {
                         o.play()
                     } catch (e) {}
                 })
-            }), u.initialize().then(function() {
-                ~window.location.href.indexOf("errortest") && e.deployFlavor !== "production" && e.deployFlavor !== "beta" ? u.requestAds("invalid_ad_url") : ~window.location.href.indexOf("twitchtest") ? (u.requestAds(e.ads.hls.getAdTagUrl({
+            }), f.initialize().then(function() {
+                ~window.location.href.indexOf("errortest") && e.deployFlavor !== "production" && e.deployFlavor !== "beta" ? f.requestAds("invalid_ad_url") : ~window.location.href.indexOf("twitchtest") ? (f.requestAds(e.ads.hls.getAdTagUrl({
                     provider: "test"
-                }), "test"), i.sendVideoAdOpportunity("preroll", "test")) : (u.requestAds(e.ads.hls.getAdTagUrl({
+                }), "test"), u.sendVideoAdOpportunity("preroll", "test")) : (f.requestAds(e.ads.hls.getAdTagUrl({
                     provider: "twitch",
                     platform: "html5",
                     channel: o.options.channel || "",
                     game: o.options.game || "",
                     referrer: document.referrer
-                }), "twitch"), i.sendVideoAdOpportunity("preroll", "twitch"))
+                }), "twitch"), u.sendVideoAdOpportunity("preroll", "twitch"))
             }), console.info("HTML5Player.init success"), r()
         }, function() {
             o._onlineStatus = "offline", t(".js-message").show().text("OFFLINE"), o.$contentPlayer.removeAttr("poster"), console.info("HTML5Player.init success (offline)"), r()
@@ -21266,8 +21274,9 @@ var Base64 = {
                 r = r || {};
                 var i = new URI,
                     s = r.referrer || document.referrer,
-                    o = s ? new URI(s) : {};
-                RSVP.hash(this.data).then(function(a) {
+                    o = s ? new URI(s) : {},
+                    a = URI.parseQuery(window.location.search).mwcc;
+                a && (r.exp_name = "mwcc", r.exp_grp = a), RSVP.hash(this.data).then(function(a) {
                     r = _.defaults(f, r || {}, {
                         session_device_id: e.idsForMixpanel.getOrCreateSessionUniqueId(),
                         localstorage_device_id: e.idsForMixpanel.getOrCreateLocalStorageUniqueId(),
